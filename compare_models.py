@@ -21,14 +21,15 @@ def compare_models(models, X, y,
                     random_state=42, 
                     metrics=['recall_score', 'precision_score']):
     # TODO 
+    results = []
     (X_train, X_test, 
         y_train, y_test) = train_test_split(X, y, random_state=random_state)
 
     for model in models:
         model.fit(X_train, y_train)
         preds = model.predict(X_test)
-        metrics = calc_metrics(y_test, preds, metrics)
-    pass
+        results.append(calc_metrics(y_test, preds, metrics))
+    return results
 
 def calc_metrics(y_true, y_pred, metrics):
     """

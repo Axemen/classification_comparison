@@ -2,6 +2,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,flask,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,flask,windows
 
+.vscode
+
 ### Flask ###
 instance/*
 !instance/.gitignore

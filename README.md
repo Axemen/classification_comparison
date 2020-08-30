@@ -21,7 +21,7 @@ pip install -r requirements.txt
 ## Milestones
 
 * Create function to run all models and calculate metrics for them. 
-* Capture model outputs and pass to flask
+* Capture model outputs and store in JSON.
 * Display model results in webpage format. 
 * Develop website layout for the comparison of models
     * Section containing Confusion Matrix

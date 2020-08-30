@@ -3,6 +3,7 @@ import webbrowser
 from typing import List
 
 import sklearn.metrics as skmetrics
+from bs4 import BeautifulSoup
 from tqdm import tqdm
 
 
@@ -24,6 +25,14 @@ This will spin up the local server and open the web browser.
 def create_report(models, X, y, random_state=42):
     # TODO
     pass
+
+
+def write_data_to_html(data, html_path, output_path='report/report.html'):
+    with open(html_path, 'r') as html_file:
+        soup = BeautifulSoup(html_file.read(), 'html.parser')
+        soup.find("script", id='data').string = "let data = " + \
+            json.dumps(data)
+        open(output_path, 'w').write(str(soup))
 
 
 def compare_models(models, X, y,
@@ -59,7 +68,7 @@ def compare_models(models, X, y,
             "clf report": skmetrics.classification_report(y_test, preds,
                                                           zero_division=0,
                                                           output_dict=True),
-            "confusion matrix":skmetrics.confusion_matrix(y_test, preds, normalize='true').tolist()
+            "confusion matrix": skmetrics.confusion_matrix(y_test, preds, normalize='true').tolist()
         }
 
         # TODO Figure out how exactly to easily accept custom metrics and their params
@@ -105,7 +114,7 @@ if __name__ == "__main__":
     y = np.random.randint(5, size=(1000,))
 
     results = compare_models(models, X, y)
-    json.dump(results, open("test.json", 'w'))
+    write_data_to_html(results, 'template.html')
     # print(results)
 
     # webbrowser.open_new('https://localhost:5000')

@@ -1,7 +1,9 @@
+import json
 import webbrowser
 from typing import List
 
 import sklearn.metrics as skmetrics
+from tqdm import tqdm
 
 
 """ 
@@ -17,13 +19,17 @@ create_report(models)
 
 This will spin up the local server and open the web browser. 
 """
+
+
 def create_report(models, X, y, random_state=42):
     # TODO
     pass
 
+
 def compare_models(models, X, y,
                    random_state=42,
-                   custom_metrics=None):
+                   custom_metrics=None
+                   ):
     """ 
     Takes in a list of models and calculates the metrics for said models
 
@@ -45,13 +51,25 @@ def compare_models(models, X, y,
     (X_train, X_test,
         y_train, y_test) = train_test_split(X, y, random_state=random_state)
 
-    for name, model in models:
+    for name, model in tqdm(models):
         model.fit(X_train, y_train)
         preds = model.predict(X_test)
-        results.append({
+        result = {
             "name": name,
-            "metrics": calc_metrics(y_test, preds, metrics)
-        })
+            "clf report": skmetrics.classification_report(y_test, preds,
+                                                          zero_division=0,
+                                                          output_dict=True),
+            "confusion matrix":skmetrics.confusion_matrix(y_test, preds, normalize='true').tolist()
+        }
+
+        # TODO Figure out how exactly to easily accept custom metrics and their params
+        if custom_metrics:
+            raise NotImplementedError
+            # results['custom metrics'] = calc_custom_metrics(y_test, preds, custom_metrics)
+        # else:
+        #     results['custom metrics'] = {}
+
+        results.append(result)
     return results
 
 
@@ -80,20 +98,14 @@ if __name__ == "__main__":
     models = [
         ("LR", LogisticRegression()),
         ("RF", RandomForestClassifier()),
-        ("DC", DummyClassifier())
+        ("DC", DummyClassifier(strategy='stratified'))
     ]
 
-    X = np.random.random_sample((100, 5))
-    y = np.random.randint(5, size=(100,))
+    X = np.random.random_sample((1000, 5))
+    y = np.random.randint(5, size=(1000,))
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y)
-
-    m = LogisticRegression()
-    m.fit(X_train, y_train)
-
-    preds = m.predict(X_test)
-
-    results = calc_metrics(y_test, preds, metrics)
-    print(results)
+    results = compare_models(models, X, y)
+    json.dump(results, open("test.json", 'w'))
+    # print(results)
 
     # webbrowser.open_new('https://localhost:5000')

@@ -5,6 +5,7 @@ from typing import List
 import sklearn.metrics as skmetrics
 from bs4 import BeautifulSoup
 from tqdm import tqdm
+from sklearn.model_selection import train_test_split
 
 
 """ 
@@ -94,27 +95,3 @@ def calc_custom_metrics(y_true, y_pred, metrics):
     """
     return {name: metric(y_true, y_pred) for name, metric in metrics}
 
-
-if __name__ == "__main__":
-    # ! This is nothing but a test case
-
-    from sklearn.linear_model import LogisticRegression
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.dummy import DummyClassifier
-    from sklearn.model_selection import train_test_split
-    import numpy as np
-
-    models = [
-        ("LR", LogisticRegression()),
-        ("RF", RandomForestClassifier()),
-        ("DC", DummyClassifier(strategy='stratified'))
-    ]
-
-    X = np.random.random_sample((1000, 5))
-    y = np.random.randint(5, size=(1000,))
-
-    results = compare_models(models, X, y)
-    write_data_to_html(results, 'template.html')
-    # print(results)
-
-    # webbrowser.open_new('https://localhost:5000')
